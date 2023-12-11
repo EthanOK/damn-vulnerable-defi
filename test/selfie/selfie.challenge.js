@@ -47,7 +47,7 @@ describe("[Challenge] Selfie", function () {
     ).deploy(governance.address, pool.address);
     await attack.attack();
     // wait 2 days
-    await ethers.provider.send("evm_increaseTime", [2 * 24 * 60 * 60]);
+    await time.increase(time.duration.days(2));
 
     await attack.attack_DELAY();
   });

