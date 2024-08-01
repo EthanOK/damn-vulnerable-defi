@@ -64,7 +64,7 @@ DO NOT USE IN PRODUCTION.
 - [x] 5. [The Rewarder](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/)
 - [x] 6. [Selfie](https://www.damnvulnerabledefi.xyz/challenges/selfie/)
 - [x] 7. [Compromised](https://www.damnvulnerabledefi.xyz/challenges/compromised/)
-- [ ] 8. [Puppet](https://www.damnvulnerabledefi.xyz/challenges/puppet/)
+- [x] 8. [Puppet](https://www.damnvulnerabledefi.xyz/challenges/puppet/)
 - [ ] 9. [Puppet V2](https://www.damnvulnerabledefi.xyz/challenges/puppet-v2/)
 - [ ] 10. [Free Rider](https://www.damnvulnerabledefi.xyz/challenges/free-rider/)
 - [ ] 11. [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
