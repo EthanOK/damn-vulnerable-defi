@@ -4,12 +4,7 @@ pragma solidity =0.8.25;
 import {ERC20} from "solmate/tokens/ERC20.sol";
 
 interface ITrusterLenderPool {
-    function flashLoan(
-        uint256 amount,
-        address borrower,
-        address target,
-        bytes calldata data
-    ) external returns (bool);
+    function flashLoan(uint256 amount, address borrower, address target, bytes calldata data) external returns (bool);
 }
 
 contract AttackTrusterLenderPool {

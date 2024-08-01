@@ -1,0 +1,16 @@
+{
+  "name": "damn-vulnerable-defi",
+  "version": "4.0.0",
+  "description": "Damn Vulnerable DeFi is _the_ smart contract security playground for developers, security researchers and educators.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "fmt": "forge fmt"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

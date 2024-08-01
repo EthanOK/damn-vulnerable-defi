@@ -33,11 +33,7 @@ contract UnstoppableChallenge is Test {
         startHoax(deployer);
         // Deploy token and vault
         token = new DamnValuableToken();
-        vault = new UnstoppableVault({
-            _token: token,
-            _owner: deployer,
-            _feeRecipient: deployer
-        });
+        vault = new UnstoppableVault({_token: token, _owner: deployer, _feeRecipient: deployer});
 
         // Deposit tokens to vault
         token.approve(address(vault), TOKENS_IN_VAULT);
