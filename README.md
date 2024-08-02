@@ -67,7 +67,7 @@ DO NOT USE IN PRODUCTION.
 - [x] 8. [Puppet](https://www.damnvulnerabledefi.xyz/challenges/puppet/)
 - [x] 9. [Puppet V2](https://www.damnvulnerabledefi.xyz/challenges/puppet-v2/)
 - [x] 10. [Free Rider](https://www.damnvulnerabledefi.xyz/challenges/free-rider/)
-- [ ] 11. [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
+- [x] 11. [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
 - [ ] 12. [Climber](https://www.damnvulnerabledefi.xyz/challenges/climber/)
 - [ ] 13. [Wallet Mining](https://www.damnvulnerabledefi.xyz/challenges/wallet-mining/)
 - [ ] 14. [Puppet V3](https://www.damnvulnerabledefi.xyz/challenges/puppet-v3/)
