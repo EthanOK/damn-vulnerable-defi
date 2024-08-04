@@ -70,7 +70,7 @@ DO NOT USE IN PRODUCTION.
 - [x] 11. [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
 - [x] 12. [Climber](https://www.damnvulnerabledefi.xyz/challenges/climber/)
 - [x] 13. [Wallet Mining](https://www.damnvulnerabledefi.xyz/challenges/wallet-mining/)
-- [ ] 14. [Puppet V3](https://www.damnvulnerabledefi.xyz/challenges/puppet-v3/)
+- [x] 14. [Puppet V3](https://www.damnvulnerabledefi.xyz/challenges/puppet-v3/)
 - [x] 15. [ABI Smuggling](https://www.damnvulnerabledefi.xyz/challenges/abi-smuggling/)
 - [ ] 16. [Shards](https://www.damnvulnerabledefi.xyz/challenges/shards/)
 - [ ] 17. [Curvy Puppet](https://www.damnvulnerabledefi.xyz/challenges/curvy-puppet/)
