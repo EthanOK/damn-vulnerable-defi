@@ -11,6 +11,7 @@ import {
     DamnValuableNFT
 } from "../../src/shards/ShardsNFTMarketplace.sol";
 import {DamnValuableStaking} from "../../src/DamnValuableStaking.sol";
+import {AttackShards} from "./AttackShards.sol";
 
 contract ShardsChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -113,7 +114,11 @@ contract ShardsChallenge is Test {
     /**
      * CODE YOUR SOLUTION HERE
      */
-    function test_shards() public checkSolvedByPlayer {}
+    function test_shards() public checkSolvedByPlayer {
+        AttackShards attackShards = new AttackShards();
+
+        attackShards.attack(address(marketplace), marketplace.nftToOffers(0), address(token), recovery);
+    }
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH
@@ -134,3 +139,5 @@ contract ShardsChallenge is Test {
         assertEq(vm.getNonce(player), 1);
     }
 }
+
+// forge test --match-contract ShardsChallenge -vvv
