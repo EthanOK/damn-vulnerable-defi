@@ -72,6 +72,6 @@ DO NOT USE IN PRODUCTION.
 - [x] 13. [Wallet Mining](https://www.damnvulnerabledefi.xyz/challenges/wallet-mining/)
 - [x] 14. [Puppet V3](https://www.damnvulnerabledefi.xyz/challenges/puppet-v3/)
 - [x] 15. [ABI Smuggling](https://www.damnvulnerabledefi.xyz/challenges/abi-smuggling/)
-- [ ] 16. [Shards](https://www.damnvulnerabledefi.xyz/challenges/shards/)
+- [x] 16. [Shards](https://www.damnvulnerabledefi.xyz/challenges/shards/)
 - [ ] 17. [Curvy Puppet](https://www.damnvulnerabledefi.xyz/challenges/curvy-puppet/)
-- [ ] 18. [Withdrawal](https://www.damnvulnerabledefi.xyz/challenges/withdrawal/)
+- [x] 18. [Withdrawal](https://www.damnvulnerabledefi.xyz/challenges/withdrawal/)

